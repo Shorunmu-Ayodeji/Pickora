@@ -19,6 +19,7 @@ export default {
         'slide-in': 'slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'fade-up': 'fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'scale-in': 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'winner-reveal': 'winnerReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       keyframes: {
         slideIn: {
@@ -49,6 +50,19 @@ export default {
           '100%': {
             opacity: '1',
             transform: 'scale(1)',
+          },
+        },
+        winnerReveal: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateX(-40px) scale(0.9)',
+          },
+          '50%': {
+            transform: 'translateX(5px) scale(1.02)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateX(0) scale(1)',
           },
         },
       },
