@@ -31,16 +31,43 @@ function ResultView({ resultId, onBack }) {
   useEffect(() => {
     // Load result data from backend API
     const loadResult = async () => {
+      if (!resultId) {
+        setLoading(false)
+        return
+      }
+
       try {
-        const response = await fetch(`/api/results/${resultId}`)
+        // Try API first
+        const apiUrl = `/api/results/${resultId}`
+        console.log('Fetching result from:', apiUrl)
+        const response = await fetch(apiUrl)
         
         if (response.ok) {
           const data = await response.json()
+          console.log('Result data received:', data)
           setWinners(data.winners || [])
           setTimestamp(data.timestamp)
           setSeed(data.seed)
           trackResultView(resultId)
         } else if (response.status === 404) {
+          console.log('Result not found in API, trying localStorage...')
+          // Try localStorage as fallback
+          try {
+            const stored = localStorage.getItem(`pickora_result_${resultId}`)
+            if (stored) {
+              const data = JSON.parse(stored)
+              console.log('Result found in localStorage:', data)
+              setWinners(data.winners || [])
+              setTimestamp(data.timestamp)
+              setSeed(data.seed)
+            } else {
+              console.log('Result not found in localStorage either')
+            }
+          } catch (e) {
+            console.error('Error parsing localStorage data:', e)
+          }
+        } else {
+          console.error('API error:', response.status, response.statusText)
           // Try localStorage as fallback
           try {
             const stored = localStorage.getItem(`pickora_result_${resultId}`)
@@ -55,15 +82,18 @@ function ResultView({ resultId, onBack }) {
           }
         }
       } catch (e) {
-        console.error('Failed to load result:', e)
+        console.error('Failed to load result from API:', e)
         // Fallback to localStorage
         try {
           const stored = localStorage.getItem(`pickora_result_${resultId}`)
           if (stored) {
             const data = JSON.parse(stored)
+            console.log('Using localStorage fallback:', data)
             setWinners(data.winners || [])
             setTimestamp(data.timestamp)
             setSeed(data.seed)
+          } else {
+            console.log('No data found in localStorage')
           }
         } catch (localError) {
           console.error('Failed to load from localStorage:', localError)

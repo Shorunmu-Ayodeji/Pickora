@@ -16,8 +16,10 @@ export default async function handler(req, res) {
   try {
     let kv = null
     try {
-      const { kv: kvClient } = await import('@vercel/kv')
-      kv = kvClient
+      if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+        const kvModule = await import('@vercel/kv')
+        kv = kvModule.kv || kvModule.default
+      }
     } catch (e) {
       // KV not configured
     }
