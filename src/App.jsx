@@ -3,6 +3,7 @@ import { useState } from 'react'
 function App() {
   const [names, setNames] = useState('')
   const [numWinners, setNumWinners] = useState(1)
+  const [numWinnersInput, setNumWinnersInput] = useState('1')
   const [winners, setWinners] = useState([])
   const [isRevealing, setIsRevealing] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -66,7 +67,7 @@ function App() {
     winners.forEach(winner => {
       tweet += `🏆 ${winner}\n`
     })
-    tweet += '\nPicked with Pickora'
+    tweet += '\nPicked with Pickora try it here https://pickora.vercel.app/'
     
     return tweet
   }
@@ -122,8 +123,25 @@ function App() {
               type="number"
               className="w-full max-w-[220px] p-4 border-[1.5px] border-black/20 bg-white text-black font-sans text-base transition-all duration-300 focus:outline-none focus:border-black focus:shadow-elegant hover:border-black/40"
               min="1"
-              value={numWinners}
-              onChange={(e) => setNumWinners(Math.max(1, parseInt(e.target.value) || 1))}
+              value={numWinnersInput}
+              onChange={(e) => {
+                const value = e.target.value
+                setNumWinnersInput(value)
+                const num = parseInt(value, 10)
+                if (!isNaN(num) && num >= 1) {
+                  setNumWinners(num)
+                }
+              }}
+              onBlur={(e) => {
+                const value = e.target.value
+                const num = parseInt(value, 10)
+                if (value === '' || isNaN(num) || num < 1) {
+                  setNumWinnersInput('1')
+                  setNumWinners(1)
+                } else {
+                  setNumWinnersInput(value)
+                }
+              }}
             />
           </div>
 
